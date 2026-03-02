@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AudioGen Studio — AI Voice Demos | Steven Koch</title>
+<meta name="description" content="AI-generated voices created with AudioGen Studio by Steven Koch. Custom voice synthesis from text descriptions — no voice actors, no cloud APIs, 100% local GPU.">
+<meta property="og:title" content="AudioGen Studio — AI Voice Demos">
+<meta property="og:description" content="Custom AI voices generated from text descriptions. Built with Python, VibeVoice & Qwen3-TTS. 100% local, zero cloud.">
+<meta property="og:type" content="website">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: #0a0a0f;
+  color: #e0e0e8;
+  min-height: 100vh;
+  line-height: 1.6;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 60px 24px 80px;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 56px;
+}
+
+.badge {
+  display: inline-block;
+  padding: 4px 14px;
+  background: rgba(56, 189, 248, 0.1);
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  border-radius: 100px;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #38bdf8;
+  margin-bottom: 20px;
+}
+
+h1 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 12px;
+  letter-spacing: -0.5px;
+}
+
+.subtitle {
+  font-size: 1rem;
+  color: #888;
+  max-width: 540px;
+  margin: 0 auto;
+}
+
+.voice-card {
+  background: #12121a;
+  border: 1px solid #1e1e2e;
+  border-radius: 16px;
+  padding: 28px;
+  margin-bottom: 20px;
+  transition: border-color 0.2s;
+}
+
+.voice-card:hover {
+  border-color: #2a2a40;
+}
+
+.voice-meta {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.voice-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+
+.voice-avatar.arthur { background: linear-gradient(135deg, #92400e, #b45309); }
+.voice-avatar.laura { background: linear-gradient(135deg, #7c3aed, #a855f7); }
+.voice-avatar.victor { background: linear-gradient(135deg, #991b1b, #dc2626); }
+
+.voice-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+.voice-desc {
+  font-size: 0.82rem;
+  color: #666;
+  margin-top: 2px;
+}
+
+.voice-tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.voice-tag {
+  padding: 3px 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  font-size: 0.7rem;
+  color: #888;
+  letter-spacing: 0.5px;
+}
+
+.player-wrapper {
+  background: #0a0a12;
+  border-radius: 10px;
+  padding: 4px;
+}
+
+audio {
+  width: 100%;
+  height: 44px;
+  border-radius: 8px;
+  outline: none;
+}
+
+.prompt-label {
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #555;
+  margin-bottom: 6px;
+}
+
+.prompt-text {
+  font-size: 0.82rem;
+  color: #999;
+  font-style: italic;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.02);
+  border-left: 2px solid #2a2a40;
+  border-radius: 0 6px 6px 0;
+  margin-bottom: 16px;
+}
+
+.tech-section {
+  margin-top: 56px;
+  padding-top: 40px;
+  border-top: 1px solid #1e1e2e;
+}
+
+.tech-section h2 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 16px;
+}
+
+.pipeline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.pipeline-step {
+  padding: 6px 14px;
+  background: rgba(56, 189, 248, 0.06);
+  border: 1px solid rgba(56, 189, 248, 0.15);
+  border-radius: 8px;
+  font-size: 0.78rem;
+  color: #38bdf8;
+  white-space: nowrap;
+}
+
+.pipeline-arrow {
+  color: #333;
+  font-size: 0.9rem;
+}
+
+.stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.stack-item {
+  padding: 5px 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  font-size: 0.75rem;
+  color: #777;
+}
+
+.footer {
+  margin-top: 56px;
+  padding-top: 32px;
+  border-top: 1px solid #1e1e2e;
+  text-align: center;
+}
+
+.footer-text {
+  font-size: 0.82rem;
+  color: #555;
+  margin-bottom: 12px;
+}
+
+.footer-link {
+  color: #38bdf8;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.footer-link:hover {
+  text-decoration: underline;
+}
+
+.credit {
+  font-size: 0.7rem;
+  color: #333;
+  margin-top: 20px;
+}
+
+@media (max-width: 600px) {
+  .container { padding: 40px 16px 60px; }
+  h1 { font-size: 1.6rem; }
+  .voice-card { padding: 20px; }
+  .pipeline { gap: 6px; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <div class="badge">AI Voice Synthesis</div>
+    <h1>AudioGen Studio</h1>
+    <div class="subtitle">Custom AI voices generated from text descriptions. No voice actors, no cloud APIs — 100% local GPU processing.</div>
+  </div>
+
+  <div class="voice-card">
+    <div class="voice-meta">
+      <div class="voice-avatar arthur">&#127908;</div>
+      <div>
+        <div class="voice-name">Arthur</div>
+        <div class="voice-desc">Deep male cowboy narrator</div>
+      </div>
+    </div>
+    <div class="prompt-label">Voice Design Prompt</div>
+    <div class="prompt-text">A deep, rugged male voice with a slow cowboy drawl. Warm and weathered, like a campfire storyteller in the American West.</div>
+    <div class="voice-tags">
+      <span class="voice-tag">Male</span>
+      <span class="voice-tag">English</span>
+      <span class="voice-tag">Deep</span>
+      <span class="voice-tag">Narrator</span>
+    </div>
+    <div class="player-wrapper">
+      <audio controls preload="metadata" src="ArthurCowboy.mp3"></audio>
+    </div>
+  </div>
+
+  <div class="voice-card">
+    <div class="voice-meta">
+      <div class="voice-avatar laura">&#127908;</div>
+      <div>
+        <div class="voice-name">Laura</div>
+        <div class="voice-desc">Warm female narrator</div>
+      </div>
+    </div>
+    <div class="prompt-label">Voice Design Prompt</div>
+    <div class="prompt-text">A warm, clear female voice with gentle authority. Natural and conversational, suitable for narration and dialogue.</div>
+    <div class="voice-tags">
+      <span class="voice-tag">Female</span>
+      <span class="voice-tag">German</span>
+      <span class="voice-tag">Warm</span>
+      <span class="voice-tag">Narrator</span>
+    </div>
+    <div class="player-wrapper">
+      <audio controls preload="metadata" src="Laura.mp3"></audio>
+    </div>
+  </div>
+
+  <div class="voice-card">
+    <div class="voice-meta">
+      <div class="voice-avatar victor">&#127908;</div>
+      <div>
+        <div class="voice-name">Victor</div>
+        <div class="voice-desc">Commanding male character voice</div>
+      </div>
+    </div>
+    <div class="prompt-label">Voice Design Prompt</div>
+    <div class="prompt-text">A commanding, authoritative male voice with dark resonance. Powerful and dramatic, suited for character dialogue and narrative weight.</div>
+    <div class="voice-tags">
+      <span class="voice-tag">Male</span>
+      <span class="voice-tag">German</span>
+      <span class="voice-tag">Deep</span>
+      <span class="voice-tag">Character</span>
+    </div>
+    <div class="player-wrapper">
+      <audio controls preload="metadata" src="Victor_Example.mp3"></audio>
+    </div>
+  </div>
+
+  <div class="tech-section">
+    <h2>Audio Pipeline</h2>
+    <div class="pipeline">
+      <span class="pipeline-step">Text Description</span>
+      <span class="pipeline-arrow">&rarr;</span>
+      <span class="pipeline-step">Qwen3-TTS VoiceDesign</span>
+      <span class="pipeline-arrow">&rarr;</span>
+      <span class="pipeline-step">VibeVoice Synthesis</span>
+      <span class="pipeline-arrow">&rarr;</span>
+      <span class="pipeline-step">Noise Gate</span>
+      <span class="pipeline-arrow">&rarr;</span>
+      <span class="pipeline-step">HPF 80Hz</span>
+      <span class="pipeline-arrow">&rarr;</span>
+      <span class="pipeline-step">Compression</span>
+      <span class="pipeline-arrow">&rarr;</span>
+      <span class="pipeline-step">LUFS-16</span>
+      <span class="pipeline-arrow">&rarr;</span>
+      <span class="pipeline-step">MP3 128kbps</span>
+    </div>
+
+    <h2 style="margin-top: 28px;">Tech Stack</h2>
+    <div class="stack">
+      <span class="stack-item">Python</span>
+      <span class="stack-item">Flask</span>
+      <span class="stack-item">VibeVoice (Microsoft)</span>
+      <span class="stack-item">Qwen3-TTS</span>
+      <span class="stack-item">PyTorch</span>
+      <span class="stack-item">Web Audio API</span>
+      <span class="stack-item">~7,000 lines</span>
+      <span class="stack-item">100% Local GPU</span>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-text">Built by Steven Koch</div>
+    <a class="footer-link" href="https://www.linkedin.com/in/steven-koch-456a48243/" target="_blank">Connect on LinkedIn</a>
+    <div class="credit">All voices generated with AudioGen Studio — no human recordings, no cloud services</div>
+  </div>
+
+</div>
+</body>
+</html>
