@@ -91,9 +91,23 @@ h1 {
   flex-shrink: 0;
 }
 
+.voice-avatar.narrator { background: linear-gradient(135deg, #065f46, #10b981); }
 .voice-avatar.arthur { background: linear-gradient(135deg, #92400e, #b45309); }
 .voice-avatar.laura { background: linear-gradient(135deg, #7c3aed, #a855f7); }
 .voice-avatar.victor { background: linear-gradient(135deg, #991b1b, #dc2626); }
+
+.vcs-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: 6px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: #10b981;
+  letter-spacing: 0.5px;
+  margin-left: 8px;
+}
 
 .voice-name {
   font-size: 1.1rem;
@@ -252,6 +266,28 @@ audio {
     <div class="badge">AI Voice Synthesis</div>
     <h1>AudioGen Studio</h1>
     <div class="subtitle">Custom AI voices generated from text descriptions. No voice actors, no cloud APIs — 100% local GPU processing.</div>
+  </div>
+
+  <div class="voice-card">
+    <div class="voice-meta">
+      <div class="voice-avatar narrator">&#127908;</div>
+      <div>
+        <div class="voice-name">Narrator <span class="vcs-badge">VCS 98.3% — Production Ready</span></div>
+        <div class="voice-desc">Rich baritone documentary narrator</div>
+      </div>
+    </div>
+    <div class="prompt-label">Voice Design Prompt</div>
+    <div class="prompt-text">A rich, smooth male voice in the low baritone range. Measured, deliberate pace with natural pauses between sentences. Warm and authoritative tone, confident without being aggressive. Clear articulation with subtle resonance. Like a documentary narrator speaking over cinematic footage.</div>
+    <div class="voice-tags">
+      <span class="voice-tag">Male</span>
+      <span class="voice-tag">English</span>
+      <span class="voice-tag">Deep</span>
+      <span class="voice-tag">Narrator</span>
+      <span class="voice-tag">NEW</span>
+    </div>
+    <div class="player-wrapper">
+      <audio controls preload="metadata" src="Narrator_New.mp3"></audio>
+    </div>
   </div>
 
   <div class="voice-card">
